@@ -1,6 +1,6 @@
 # Focus Time
 
-A minimal pomodoro timer with task tracking.
+A minimal pomodoro timer with task tracking
 
 ## Features
 
@@ -17,13 +17,3 @@ A minimal pomodoro timer with task tracking.
 3. Click Begin to start
 4. Check off tasks as you complete them
 5. Complete all tasks early to end the session
-
-## Run Locally
-
-Open `pomodoro.html` in a browser, or serve with:
-
-```
-python3 -m http.server 8000
-```
-
-Then visit http://localhost:8000/pomodoro.html
