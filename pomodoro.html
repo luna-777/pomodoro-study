@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Time</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Pacifico&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --pink-soft: #FFE5EC;
+            --pink-medium: #FFB3C6;
+            --pink-bright: #FF8FAB;
+            --pink-deep: #FB6F92;
+            --white: #FFFFFF;
+            --cream: #FFF9FA;
+            --text-dark: #4A4A4A;
+            --text-light: #8B8B8B;
+            --shadow: rgba(255, 143, 171, 0.15);
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--pink-soft) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 32px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 10px 40px var(--shadow);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--pink-soft) 0%, transparent 70%);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: var(--pink-deep);
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        /* Setup Screen */
+        .setup-screen {
+            position: relative;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 1rem;
+            border: 2px solid var(--pink-soft);
+            border-radius: 16px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            resize: vertical;
+            transition: all 0.3s ease;
+            background: var(--cream);
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--pink-bright);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(255, 143, 171, 0.1);
+        }
+
+        textarea::placeholder {
+            color: var(--text-light);
+        }
+
+        .time-settings {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .time-input-wrapper {
+            position: relative;
+        }
+
+        .time-input-wrapper input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--pink-soft);
+            border-radius: 16px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: var(--cream);
+        }
+
+        .time-input-wrapper input:focus {
+            outline: none;
+            border-color: var(--pink-bright);
+            background: var(--white);
+            box-shadow: 0 0 0 4px rgba(255, 143, 171, 0.1);
+        }
+
+        .presets {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .preset-btn {
+            padding: 0.75rem;
+            border: 2px solid var(--pink-soft);
+            background: var(--cream);
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .preset-btn:hover {
+            background: var(--pink-soft);
+            border-color: var(--pink-medium);
+            transform: translateY(-2px);
+        }
+
+        .preset-btn.active {
+            background: var(--pink-bright);
+            border-color: var(--pink-bright);
+            color: var(--white);
+        }
+
+        .start-btn {
+            width: 100%;
+            padding: 1.125rem;
+            background: linear-gradient(135deg, var(--pink-bright) 0%, var(--pink-deep) 100%);
+            border: none;
+            border-radius: 16px;
+            color: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(251, 111, 146, 0.3);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(251, 111, 146, 0.4);
+        }
+
+        .start-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Timer Screen */
+        .timer-screen {
+            display: none;
+            position: relative;
+        }
+
+        .timer-screen.active {
+            display: block;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .timer-display {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .timer-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .timer-circle {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 2rem;
+        }
+
+        .timer-circle svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: rotate(-90deg);
+        }
+
+        .timer-circle circle {
+            fill: none;
+            stroke-width: 8;
+        }
+
+        .timer-circle .bg-circle {
+            stroke: var(--pink-soft);
+        }
+
+        .timer-circle .progress-circle {
+            stroke: var(--pink-bright);
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .timer-time {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3.5rem;
+            font-weight: 300;
+            color: var(--text-dark);
+            letter-spacing: 2px;
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid var(--pink-medium);
+            background: var(--white);
+            border-radius: 16px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--pink-deep);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: var(--pink-soft);
+            transform: translateY(-2px);
+        }
+
+        .control-btn.primary {
+            background: linear-gradient(135deg, var(--pink-bright) 0%, var(--pink-deep) 100%);
+            border-color: var(--pink-bright);
+            color: var(--white);
+        }
+
+        .control-btn.primary:hover {
+            background: linear-gradient(135deg, var(--pink-deep) 0%, var(--pink-bright) 100%);
+        }
+
+        /* Checklist */
+        .checklist {
+            margin-top: 1.5rem;
+        }
+
+        .checklist-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .checklist-items {
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .checklist-items::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .checklist-items::-webkit-scrollbar-track {
+            background: var(--pink-soft);
+            border-radius: 10px;
+        }
+
+        .checklist-items::-webkit-scrollbar-thumb {
+            background: var(--pink-medium);
+            border-radius: 10px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem;
+            background: var(--cream);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .checklist-item:hover {
+            background: var(--pink-soft);
+        }
+
+        .checklist-item.completed {
+            opacity: 0.6;
+        }
+
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            border: 2px solid var(--pink-medium);
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        .checkbox:hover {
+            border-color: var(--pink-bright);
+            background: var(--pink-soft);
+        }
+
+        .checkbox.checked {
+            background: var(--pink-bright);
+            border-color: var(--pink-bright);
+        }
+
+        .checkbox.checked::after {
+            content: '✓';
+            color: var(--white);
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .checklist-text {
+            flex: 1;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .checklist-item.completed .checklist-text {
+            text-decoration: line-through;
+        }
+
+        .empty-checklist {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+            padding: 2rem;
+            font-style: italic;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            .card {
+                padding: 2rem 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .timer-circle {
+                width: 180px;
+                height: 180px;
+            }
+
+            .timer-time {
+                font-size: 2.5rem;
+            }
+
+            .presets {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Setup Screen -->
+        <div id="setupScreen" class="card setup-screen">
+            <h1>Focus Time</h1>
+            <p class="subtitle"></p>
+
+            <div class="input-group">
+                <label> What do you want to accomplish this session? </label>
+                <textarea id="checklistInput" placeholder="Type each task on a new line... " ></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Time Settings</label>
+                <div class="time-settings">
+                    <div class="time-input-wrapper">
+                        <label style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem;">Focus Time (min)</label>
+                        <input type="number" id="focusTime" value="25" min="1" max="120">
+                    </div>
+                    <div class="time-input-wrapper">
+                        <label style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.25rem;">Break Time (min)</label>
+                        <input type="number" id="breakTime" value="5" min="1" max="60">
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Presets </label>
+                <div class="presets">
+                    <button class="preset-btn active" onclick="setPreset(25, 5)">25 / 5</button>
+                    <button class="preset-btn" onclick="setPreset(50, 10)">50 / 10</button>
+                    <button class="preset-btn" onclick="setPreset(90, 15)">90 / 15</button>
+                </div>
+            </div>
+
+            <button class="start-btn" onclick="startSession()"> Begin </button>
+        </div>
+
+        <!-- Timer Screen -->
+        <div id="timerScreen" class="card timer-screen">
+            <div class="timer-display">
+                <div class="timer-label" id="timerLabel">Focus Time</div>
+                <div class="timer-circle">
+                    <svg width="220" height="220">
+                        <circle class="bg-circle" cx="110" cy="110" r="100"></circle>
+                        <circle class="progress-circle" id="progressCircle" cx="110" cy="110" r="100"></circle>
+                    </svg>
+                    <div class="timer-time" id="timerDisplay">25:00</div>
+                </div>
+            </div>
+
+            <div class="timer-controls">
+                <button class="control-btn primary" id="playPauseBtn" onclick="toggleTimer()">Pause</button>
+                <button class="control-btn" onclick="resetSession()">Reset</button>
+            </div>
+
+            <div class="checklist">
+                <div class="checklist-title"> Tasks</div>
+                <div class="checklist-items" id="checklistItems">
+                    <div class="empty-checklist">No tasks added yet</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let timerInterval;
+        let totalSeconds;
+        let currentSeconds;
+        let isRunning = false;
+        let isFocusTime = true;
+        let focusDuration;
+        let breakDuration;
+
+        const circumference = 2 * Math.PI * 100;
+
+        function setPreset(focus, breakTime) {
+            document.getElementById('focusTime').value = focus;
+            document.getElementById('breakTime').value = breakTime;
+            
+            // Update active state
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function startSession() {
+            const checklistText = document.getElementById('checklistInput').value;
+            focusDuration = parseInt(document.getElementById('focusTime').value) * 60;
+            breakDuration = parseInt(document.getElementById('breakTime').value) * 60;
+
+            // Parse checklist
+            const tasks = checklistText.split('\n')
+                .map(task => task.trim())
+                .filter(task => task.length > 0)
+                .map(task => task.replace(/^[•\-\*]\s*/, ''));
+
+            // Display checklist
+            const checklistContainer = document.getElementById('checklistItems');
+            if (tasks.length > 0) {
+                checklistContainer.innerHTML = tasks.map((task, index) => `
+                    <div class="checklist-item" onclick="toggleTask(${index})">
+                        <div class="checkbox" id="checkbox-${index}"></div>
+                        <div class="checklist-text">${task}</div>
+                    </div>
+                `).join('');
+            } else {
+                checklistContainer.innerHTML = '<div class="empty-checklist">No tasks added yet</div>';
+            }
+
+            // Start timer
+            totalSeconds = focusDuration;
+            currentSeconds = totalSeconds;
+            updateDisplay();
+            
+            document.getElementById('setupScreen').classList.remove('active');
+            document.getElementById('setupScreen').style.display = 'none';
+            document.getElementById('timerScreen').classList.add('active');
+            
+            isRunning = true;
+            timerInterval = setInterval(tick, 1000);
+        }
+
+        function tick() {
+            if (!isRunning) return;
+
+            currentSeconds--;
+
+            if (currentSeconds < 0) {
+                // Timer finished
+                playSound();
+                if (isFocusTime) {
+                    // Switch to break
+                    isFocusTime = false;
+                    totalSeconds = breakDuration;
+                    currentSeconds = totalSeconds;
+                    document.getElementById('timerLabel').textContent = 'Break Time';
+                    document.querySelector('.progress-circle').style.stroke = '#FFB3C6';
+                } else {
+                    // Switch to focus
+                    isFocusTime = true;
+                    totalSeconds = focusDuration;
+                    currentSeconds = totalSeconds;
+                    document.getElementById('timerLabel').textContent = 'Focus Time';
+                    document.querySelector('.progress-circle').style.stroke = '#FF8FAB';
+                }
+            }
+
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const minutes = Math.floor(currentSeconds / 60);
+            const seconds = currentSeconds % 60;
+            document.getElementById('timerDisplay').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            // Update progress circle
+            const progress = currentSeconds / totalSeconds;
+            const offset = circumference * (1 - progress);
+            document.getElementById('progressCircle').style.strokeDasharray = `${circumference} ${circumference}`;
+            document.getElementById('progressCircle').style.strokeDashoffset = offset;
+        }
+
+        function toggleTimer() {
+            isRunning = !isRunning;
+            const btn = document.getElementById('playPauseBtn');
+            btn.textContent = isRunning ? 'Pause' : 'Resume';
+        }
+
+        function resetSession() {
+            if (confirm('Are you sure you want to reset and go back to setup?')) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                isFocusTime = true;
+                document.getElementById('timerScreen').classList.remove('active');
+                document.getElementById('setupScreen').style.display = 'block';
+                document.getElementById('setupScreen').classList.add('active');
+            }
+        }
+
+        function toggleTask(index) {
+            const item = document.querySelectorAll('.checklist-item')[index];
+            const checkbox = document.getElementById(`checkbox-${index}`);
+
+            item.classList.toggle('completed');
+            checkbox.classList.toggle('checked');
+
+            // Check if all tasks are completed
+            checkAllTasksCompleted();
+        }
+
+        function checkAllTasksCompleted() {
+            const allItems = document.querySelectorAll('.checklist-item');
+            if (allItems.length === 0) return;
+
+            const completedItems = document.querySelectorAll('.checklist-item.completed');
+            if (completedItems.length === allItems.length) {
+                // All tasks completed early
+                clearInterval(timerInterval);
+                isRunning = false;
+                playSound();
+
+                setTimeout(() => {
+                    alert('Congratulations! You finished all your tasks early!');
+                    isFocusTime = true;
+                    document.getElementById('timerScreen').classList.remove('active');
+                    document.getElementById('setupScreen').style.display = 'block';
+                    document.getElementById('setupScreen').classList.add('active');
+                }, 300);
+            }
+        }
+
+        function playSound() {
+            // Create a simple beep sound
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.frequency.value = 800;
+            oscillator.type = 'sine';
+
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.5);
+        }
+    </script>
+</body>
+</html>
